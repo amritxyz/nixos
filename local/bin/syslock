@@ -1,0 +1,26 @@
+#!/bin/sh
+
+export WM="dwm"
+export CTL='systemctl'
+
+lock(){
+	wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+	kill -44 $(pidof dwmblocks)
+	slock
+	wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+	kill -44 $(pidof dwmblocks)
+}
+
+choice=$(printf "renew\nlock\nsleep\nlogout\nreboot\nshutdown" | \
+	dmenu -i -p 'Action: ')
+
+# Action
+case "$choice" in
+	'renew') kill -HUP $(pidof $WM) ;;
+	'lock') lock ;;
+	'sleep') slock $CTL suspend -i ;;
+	"logout") pkill -SIGKILL $WM ;;
+	'reboot') $CTL reboot -i ;;
+	'shutdown') $CTL poweroff -i ;;
+	*) exit 1 ;;
+esac

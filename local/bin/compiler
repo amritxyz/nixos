@@ -1,0 +1,24 @@
+#!/bin/sh
+
+f="$1"
+e="${f##*.}"
+d="${f%/*}"
+b="${f%.*}"
+
+cd "$d" || exit
+
+case "$e" in
+	[0-9]) preconv "$f" | refer -PS -e | groff -mandoc -T pdf > "$b.pdf" ;;
+	mom|ms) preconv "$f" | refer -PS -e | groff -T pdf -m"$e" > "$b.pdf" ;;
+	c) cc "$f" -o "$b.o" && "$b.o" ;;
+	cob) cobc -x -o "$b.o" "$f" && ./"$b.o" ;;
+	cpp) c++ "$f" -o "$b.o" && "$b.o" ;;
+	go) go run "$f" ;;
+	h) make clean install || exit ;;
+	java) _JAVA_AWT_WM_NONREPARENTING=1 java "$f" ;;
+	py) python "$f" ;;
+	rs) cargo build ;;
+	tex) pdflatex -interaction=nonstopmode "$f" ;;
+	typ) typst compile "$f" ;;
+	*) s=$(sed -n '1{/^#!/s/^#!//p;q;}' "$f") && [ -n "$s" ] && exec $s "$f" ;;
+esac

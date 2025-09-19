@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[ "$#" -ne 1 ] && echo "Usage: $0 <file.rs>" >&2 && exit 1
+
+i="$1"
+o="${i%.rs}.out"
+
+[ -f "$i" ] || {
+	echo "Error: '$i' not found!" >&2
+	exit 1
+}
+
+rustc "$i" -o "$o" || exit $?

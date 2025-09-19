@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[ "$#" -ne 1 ] && echo "Usage: $0 <file.go>" >&2 && exit 1
+
+i="$1"
+o="${i%.go}.out"
+
+[ -f "$i" ] || {
+	echo "Error: '$i' not found!" >&2
+	exit 1
+}
+
+go build -o "$o" "$i" || exit $?

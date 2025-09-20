@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# Output time and date in a clean format
-printf "%s %s %s %s\n" "|" "$(date '+%a, %B %d')" "|" "$(date '+%I:%M %p')"

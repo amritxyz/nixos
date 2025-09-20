@@ -25,7 +25,6 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Configure keymap in X11
-  programs.hyprland.enable = true;
   services.xserver.xkb = {
     layout = "us";
     variant = "";
@@ -46,15 +45,53 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-   neovim
-   wget
-   git
-   kitty
-   firefox
+    hyprland
+    hyprlock
+    hyprpaper
+    waybar
+    wtype
+    wofi
+    wl-clipboard
+    foot
+    neovim
+    wget
+    git
+    firefox
+    lf
+    grim
+    slurp
+    imv
+    mpv
+    # dejavu_fonts
+    nerd-fonts.symbols-only
   ];
+
+xdg = {
+  portal = {
+    enable = true;
+    wlr = {
+      enable = true;
+      settings = {
+        screencast = {
+          output_name = "eDP-1";
+          max_fps = 30;
+          # exec_before = "disable_notifications.sh";
+          # exec_after = "enable_notifications.sh";
+          chooser_type = "simple";
+          chooser_cmd = "${pkgs.slurp}/bin/slurp -f %o -or";
+        };
+      };
+    };
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-hyprland 
+      xdg-desktop-portal-gtk 
+    ];
+  };
+};
 
   # started in user sessions.
   # programs.mtr.enable = true;
+  # programs.hyprland.enable = true;
   # programs.gnupg.agent = {
   #   enable = true;
   #   enableSSHSupport = true;

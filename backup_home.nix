@@ -1,20 +1,18 @@
 { config, pkgs, ... }:
 
 let
-  dot_config = "${config.home.homeDirectory}/.local/git-repos/nixos/config";
-  # neovim = "${config.home.homeDirectory}/.local/git-repos/nixos/neovim";
-  # dot_local = "${config.home.homeDirectory}/.local/git-repos/nixos/local";
+  # Use relative paths from the Nix file instead of hardcoded absolute paths
   create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 
-  # Standard .config/directory
+  # Standard ~/.config/ directories, relative to ./config/
   configs = {
     hypr = "hypr";
+    waybar = "waybar";
     foot = "foot";
     nvim = "nvim";
     bleachbit = "bleachbit";
     mako = "mako";
     fastfetch = "fastfetch";
-    # git = "git";
     gnupg = "gnupg";
     gtk2 = "gtk-2.0";
     gtk3 = "gtk-3.0";
@@ -25,7 +23,6 @@ let
     npm = "npm";
     pulse = "pulse";
     python = "python";
-    waybar = "waybar";
     wofi = "wofi";
     qt5ct = "qt5ct";
     qt6ct = "qt6ct";
@@ -43,12 +40,13 @@ let
   };
 
 in
-
 {
   home.username = "void";
   home.homeDirectory = "/home/void";
-  programs.git.enable = true;
   home.stateVersion = "25.05";
+
+  programs.git.enable = true;
+
   programs.bash = {
     enable = true;
     shellAliases = {
@@ -56,38 +54,23 @@ in
       gitr = "cd ~/.local/git-repos";
     };
     initExtra = ''
-      	  export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
-      	'';
+      export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
+    '';
   };
 
-  # home.file.".config/nvim".source = ./config/nvim;
-
+  # Symlinks for ~/.config/*
   xdg.configFile = builtins.mapAttrs
     (name: subpath: {
-      source = create_symlink "${dot_config}/${subpath}";
+      source = create_symlink ./config/${subpath};
       recursive = true;
     })
   configs;
 
-  # home.file = builtins.mapAttrs (name: path: {
-  #   source = create_symlink path;
-  #   target = "${config.home.homeDirectory}/.local/${name}";
-  # }) local_symlinks;
-
-  home.file.".local/bin" = {
-      source = ./local/bin;
-      recursive = true;
-  };
-
-  home.file.".local/share" = {
-      source = ./local/share;
-      recursive = true;
-  };
-
-  home.file.".local/share/applications" = {
-      source = ./local/share/applications;
-      recursive = true;
-  };
+  # Symlinks for ~/.local/{bin,share}
+  home.file = builtins.mapAttrs (name: path: {
+    source = create_symlink path;
+    target = "${config.home.homeDirectory}/.local/${name}";
+  }) local_symlinks;
 
   home.packages = with pkgs; [
     ripgrep
@@ -103,5 +86,4 @@ in
     harfbuzz
     fontconfig
   ];
-
 }

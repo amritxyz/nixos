@@ -21,7 +21,7 @@ cmd mkfile ${{
 cmd open &{{
 	case $(file --mime-type -Lb $f) in
 		text/*|application/json|application/javascript|inode/*|application/*-ini) lf -remote "send $id \$nvim \$fx";;
-		image/*) nsxiv "$f";;
+		image/*) imv -W 700 -H 500 "$f";;
 		audio/*|video/*|application/ogg) mpv --force-window "$f";;
 		application/pdf|image/vnd.djvu|application/x-cbr|application/x-cbz|application/x-comic|application/x-comic+zip) zathura "$f";;
 		application/vnd.oasis.opendocument.*|application/vnd.ms-office|application/vnd.openxmlformats-officedocument.*|application/vnd.sun.xml.*) libreoffice "$f";;
@@ -59,17 +59,15 @@ map d
 map m
 
 map zi extract
-map a $xwallpaper --stretch "$f"
 
 # Basic Functions
 map . set hidden!
 map dd delete
 map du %du -sh "$f"
 
-# Backup
-map bak %bak "$f"
-
-map o $mpv --force-window "$f"
+# map u $trashy restore -r 0
+map dr $trashy restore
+map de $trashy empty --all
 map p paste
 map x cut
 map y copy
@@ -92,8 +90,7 @@ map ga cd ~/.local/audio
 map gv cd ~/.local/vids
 map gs cd ~/.local/share
 map gr cd ~/.local/git-repos
-map gw cd ~/.local/share/void-wall
+map gw cd ~/.local/share/wall
 map gp cd ~/.local/practice
 map gl cd ~/.local/dl
 map gx cd ~/.local/dox
-map gt cd /opt/void/
